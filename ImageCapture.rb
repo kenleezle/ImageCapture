@@ -40,4 +40,4 @@ end
 fileName = "/var/log/auth.log"
 regex = "/.*sudo.*auth.*authentication.*failure/"
 
-watch_for(fileName, /sudo:auth.*:\sauthentication\sfailure/)
+watch_for(fileName, /mdm:auth.*:\sauthentication\sfailure/)
