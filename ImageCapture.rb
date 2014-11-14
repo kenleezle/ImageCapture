@@ -1,43 +1,32 @@
-#!/usr/bin/ruby
+#!/usr/bin/ruby-2.0.0-p594
 
-# Perls use equivalent
-require 'net/smtp'
-require 'rubygems'
 require 'hornetseye_v4l2'
 require 'hornetseye_xorg'
 require 'hornetseye_rmagick'
 
 include Hornetseye
 
-attachment = 'perp.png'
+File.open("/home/anthony/Documents/Ruby/auth","w") {|file| file.truncate(0)}
+# Writing my own function for TAIL
+def tail(file, pattern)
+  f = File.open(file,"r")
+  # Since this file exists and is growing, seek to the end of the most recent entry
+  f.seek(0, IO::SEEK_END)
 
-# Def is the same as Perl's sub. Writing our own function.
-def watch_for(file,pattern)
-	f = File.open(file,"r")
+  count = 0
+  while true do
+  # Poll for data
+  select([f])
 
-	# Since this file exists and is growing, seek to the end of the most recent entry
-	f.seek(0, IO::SEEK_END)
-
-while true do
-
-	# Poll for data
-	select([f])
-
-	if f.gets =~ pattern
-		#File.open("/home/anthony/Documents/Ruby/tmpCount", File::RDWR) {|wrt| wrt.write "Failed attempt\n"}
-		camera = V4L2Input.new '/dev/video0'
-		img = camera.read
-		img.to_ubytergb.save_ubytergb 'perp.png'
-	
-
-	 exit
-
-	end
- end
-
+  count = 0
+  if f.gets =~ pattern
+    #File.open("/home/anthony/Documents/Ruby/tmpCount", File::RDWR) {|wrt| wrt.write "Failed attempt\n"}
+    camera = V4L2Input.new '/dev/video0'
+    img = camera.read
+    img.to_ubytergb.save_ubytergb 'capture.png'
+    File.open("/home/anthony/Documents/Ruby/auth", "w") { |file| file.write("anthony\n") }
+    break
+   end
+  end
 end
-
-fileName = "/var/log/auth.log"
-regex = "/.*sudo.*auth.*authentication.*failure/"
-
-watch_for(fileName, /mdm:auth.*:\sauthentication\sfailure/)
+tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/)
