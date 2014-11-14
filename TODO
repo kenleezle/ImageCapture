@@ -1,3 +1,5 @@
-1) Give user password hint and After 5 failed attempts let the user in. Whether wrong or right.
+1) Auto log user in after 1 failed attempt.
     => The issue with this concept is that in order for the picture or cordinates to be uploaded, you 
     need an internet connection.
+    DONE
+2)...    
