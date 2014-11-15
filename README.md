@@ -10,4 +10,6 @@ auth sufficient pam_listfile.so item=user file=/path/to/userAuthFile sense=allow
 
 to my gdm-password file. Read here for a breakdown of this pam SO file http://linux.die.net/man/8/pam_listfile
 
+googles GeoLocation API for Ruby https://developers.google.com/api-client-library/ruby/start/installation
+
 To be continued .....
