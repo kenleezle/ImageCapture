@@ -1,0 +1,3 @@
+changes
+
+=> Added geolocation data function. It grabs geolocation lat/lon coordinates and emails them.
