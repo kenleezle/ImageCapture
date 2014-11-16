@@ -1,6 +1,7 @@
 #!/usr/bin/ruby-2.0.0-p594
 
 require 'mail'
+require 'watir'
 require 'google/api_client'
 require 'hornetseye_v4l2'
 require 'hornetseye_xorg'
@@ -8,11 +9,7 @@ require 'hornetseye_rmagick'
 
 include Hornetseye
 
-class DataMailer
-  require 'mail'
-end
-
-class ImageCapture < DataMailer
+class ImageCapture
 
   def auth(authFile, user)
     if authFile.nil?
@@ -51,17 +48,24 @@ class ImageCapture < DataMailer
       if f.gets =~ regex
       count += 1
 
-	if count == attemptNo
-          camera = V4L2Input.new '/dev/video0'
-          img = camera.read
-          img.to_ubytergb.save_ubytergb 'capture.png'
-	  if bool == 1
-            File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
-            break
-	  else
-	    break
-          end
-        end
+	  if count == attemptNo && bool == 1
+        camera = V4L2Input.new '/dev/video0'
+        img = camera.read
+        img.to_ubytergb.save_ubytergb 'capture.png'
+	    #system("/opt/google/chrome/chrome --user-data-dir=/home/anthony/Documents/Ruby/ trutechdesigns.com && pkill chrome")
+        File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+        break
+
+	  elsif count == attemptNo && bool == 0
+        camera = V4L2Input.new '/dev/video0'
+        img = camera.read
+        img.to_ubytergb.save_ubytergb 'capture.png'
+		#system("/opt/google/chrome/chrome --user-data-dir=/home/anthony/Documents/Ruby/ https://trutechdesigns.com && pkill chrome")
+        File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+        break
+
+       end
+
       end
 
      end # End of while true do
@@ -74,23 +78,33 @@ end
 ImgCap = ImageCapture.new
 ImgCap.auth("/home/anthony/Documents/Ruby/auth", "anthony")
 ImgCap.eraseFile
-ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/, 3, 0)
+ImgCap.tail("/var/log/auth.log", /mate-screensaver:auth.*:\sauthentication\sfailure/, 1, 1)
 
-def dataMailer(port, imgName, imgPath)
+class DataMailer
 
-  Mail.defaults do
-    delivery_method :smtp, address: "localhost", port: port
+  def dataMailer(port, imgName, imgPath)
+  @@imgPath = imgPath
+
+    Mail.defaults do
+      delivery_method :smtp, address: "localhost", port: port
+    end
+
+    mail = Mail.new do
+      from     'amboxer21@gmail.com'
+      to       'amboxer21@gmail.com'
+      subject  'Image Captured'
+      body     'Captured image'
+      add_file :filename => imgName, :content => File.read(@@imgPath + imgName)
+    end
+
+  mail.delivery_method :sendmail
+  mail.deliver
   end
-
-  mail = Mail.new do
-    from     'amboxer21@gmail.com'
-    to       'amboxer21@gmail.com'
-    subject  'Image Captured'
-    body     'Captured image'
-    add_file :filename => imgName, :content => File.read(imgPath + imgName)
-  end
-
-mail.delivery_method :sendmail
-mail.deliver
 end
-dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
+sendImage = DataMailer.new
+sendImage.dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
+
+browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
+browser.goto("http://trutechdesigns.com")
+sleep 1
+browser.close
