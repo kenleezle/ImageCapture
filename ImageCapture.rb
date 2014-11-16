@@ -34,27 +34,37 @@ class ImageCapture < DataMailer
     File.open(@authFile, "w") {|file| file.truncate(0)}
   end
 
-  def tail(tailFile, regex)
+  def tail(tailFile, regex, attemptNo, bool)
+
     if tailFile.nil?
       puts "Please provide a file to tail."  
       return
     else
+
       f = File.open(tailFile, "r")
       f.seek(0, IO::SEEK_END)
 
+      count = 0
       while true do
       select([f])
 
       if f.gets =~ regex
-        camera = V4L2Input.new '/dev/video0'
-        img = camera.read
-        img.to_ubytergb.save_ubytergb 'capture.png'
-        File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
-        break
+      count += 1
+
+	if count == attemptNo
+          camera = V4L2Input.new '/dev/video0'
+          img = camera.read
+          img.to_ubytergb.save_ubytergb 'capture.png'
+	  if bool == 1
+            File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+            break
+	  else
+	    break
+          end
+        end
       end
 
      end # End of while true do
-
     end
 
   end
@@ -64,7 +74,7 @@ end
 ImgCap = ImageCapture.new
 ImgCap.auth("/home/anthony/Documents/Ruby/auth", "anthony")
 ImgCap.eraseFile
-ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/)
+ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/, 3, 0)
 
 def dataMailer(port, imgName, imgPath)
 
