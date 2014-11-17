@@ -2,6 +2,7 @@
 
 require 'mail'
 require 'watir'
+require 'watir-webdriver'
 require 'google/api_client'
 require 'hornetseye_v4l2'
 require 'hornetseye_xorg'
@@ -10,6 +11,7 @@ require 'hornetseye_rmagick'
 include Hornetseye
 
 class ImageCapture
+  @@locationBool = []
 
   def auth(authFile, user)
     if authFile.nil?
@@ -31,7 +33,8 @@ class ImageCapture
     File.open(@authFile, "w") {|file| file.truncate(0)}
   end
 
-  def tail(tailFile, regex, attemptNo, bool)
+  public
+  def tail(tailFile, regex, attemptNo=2, bool)
 
     if tailFile.nil?
       puts "Please provide a file to tail."  
@@ -48,19 +51,21 @@ class ImageCapture
       if f.gets =~ regex
       count += 1
 
-	  if count == attemptNo && bool == 1
-        camera = V4L2Input.new '/dev/video0'
-        img = camera.read
-        img.to_ubytergb.save_ubytergb 'capture.png'
-        File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+        if count == attemptNo && bool == 1
+          camera = V4L2Input.new '/dev/video0'
+          img = camera.read
+          img.to_ubytergb.save_ubytergb 'capture.png'
+          File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+	  @@locationBool << 1
         break
 
-	  elsif count == attemptNo && bool == 0
-        camera = V4L2Input.new '/dev/video0'
-        img = camera.read
-        img.to_ubytergb.save_ubytergb 'capture.png'
-        File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
-        break
+        elsif count == attemptNo && bool == 0
+          camera = V4L2Input.new '/dev/video0'
+          img = camera.read
+          img.to_ubytergb.save_ubytergb 'capture.png'
+          File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
+	  @@locationBool << 1
+          break
        end
 
       end
@@ -100,3 +105,22 @@ class DataMailer
 end
 sendImage = DataMailer.new
 sendImage.dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
+
+class LocationData < ImageCapture
+
+  def getLocation
+    if true #@@locationBool == 1   
+      browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
+      browser.goto "http://trutechdesigns.com"
+      sleep 1
+      browser.close
+    else
+      puts "locationBool false"
+      return false 
+    end
+  end
+
+end
+
+grabLocation = LocationData.new
+grabLocation.getLocation
