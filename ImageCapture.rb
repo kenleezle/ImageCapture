@@ -112,7 +112,7 @@ class LocationData < ImageCapture
     if @@locationBool == 1
       browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
       browser.goto "http://trutechdesigns.com"
-      sleep 1
+      sleep 3
       browser.close
     else
       puts "locationBool false"
