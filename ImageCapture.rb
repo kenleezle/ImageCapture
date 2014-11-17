@@ -56,7 +56,7 @@ class ImageCapture
           img = camera.read
           img.to_ubytergb.save_ubytergb 'capture.png'
           File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
-	  @@locationBool << 1
+	  @@locationBool = 1
         break
 
         elsif count == attemptNo && bool == 0
@@ -64,7 +64,7 @@ class ImageCapture
           img = camera.read
           img.to_ubytergb.save_ubytergb 'capture.png'
           File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
-	  @@locationBool << 1
+	  @@locationBool = 1
           break
        end
 
@@ -109,7 +109,7 @@ sendImage.dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
 class LocationData < ImageCapture
 
   def getLocation
-    if true #@@locationBool == 1   
+    if @@locationBool == 1
       browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
       browser.goto "http://trutechdesigns.com"
       sleep 1
