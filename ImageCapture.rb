@@ -52,7 +52,6 @@ class ImageCapture
         camera = V4L2Input.new '/dev/video0'
         img = camera.read
         img.to_ubytergb.save_ubytergb 'capture.png'
-	    #system("/opt/google/chrome/chrome --user-data-dir=/home/anthony/Documents/Ruby/ trutechdesigns.com && pkill chrome")
         File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
         break
 
@@ -60,10 +59,8 @@ class ImageCapture
         camera = V4L2Input.new '/dev/video0'
         img = camera.read
         img.to_ubytergb.save_ubytergb 'capture.png'
-		#system("/opt/google/chrome/chrome --user-data-dir=/home/anthony/Documents/Ruby/ https://trutechdesigns.com && pkill chrome")
         File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
         break
-
        end
 
       end
@@ -78,7 +75,7 @@ end
 ImgCap = ImageCapture.new
 ImgCap.auth("/home/anthony/Documents/Ruby/auth", "anthony")
 ImgCap.eraseFile
-ImgCap.tail("/var/log/auth.log", /mate-screensaver:auth.*:\sauthentication\sfailure/, 1, 1)
+ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/, 2, 1)
 
 class DataMailer
 
@@ -103,8 +100,3 @@ class DataMailer
 end
 sendImage = DataMailer.new
 sendImage.dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
-
-browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
-browser.goto("http://trutechdesigns.com")
-sleep 1
-browser.close
