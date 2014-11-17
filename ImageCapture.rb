@@ -85,7 +85,7 @@ ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/
 class DataMailer
 
   def dataMailer(port, imgName, imgPath)
-  @@imgPath = imgPath
+  @imgPath = imgPath
 
     Mail.defaults do
       delivery_method :smtp, address: "localhost", port: port
@@ -96,7 +96,7 @@ class DataMailer
       to       'amboxer21@gmail.com'
       subject  'Image Captured'
       body     'Captured image'
-      add_file :filename => imgName, :content => File.read(@@imgPath + imgName)
+      add_file :filename => imgName, :content => File.read(@imgPath + imgName)
     end
 
   mail.delivery_method :sendmail
