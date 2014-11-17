@@ -1,7 +1,7 @@
 ImageCapture.rb
 ===============
 
-=> JUST A ROUGH DRAFT. WILL FIX UP... EVENTUALLY!
+JUST A ROUGH DRAFT. WILL FIX UP... EVENTUALLY!
 
 A program to capture webcam images "DURING" login failures.
 
