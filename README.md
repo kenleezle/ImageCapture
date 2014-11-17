@@ -1,7 +1,7 @@
 ImageCapture.rb
 ===============
 
-JUST A ROUGH DRAFT. WILL FIX UP... EVENTUALLY!
+=> JUST A ROUGH DRAFT. WILL FIX UP... EVENTUALLY!
 
 A program to capture webcam images "DURING" login failures.
 
@@ -30,13 +30,13 @@ Watir is pretty cool! It opens your browser with the supplied url, then closes i
 DEPENDENCIES TO GET CHROME TO LAUNCH FROM THE COMMAND LINE
 
 # libudev-dev enables you to launch Google Chrome from the command line.
-    => sudo apt-get install libudev-dev
+        sudo apt-get install libudev-dev
 
 # For a 32 bit system. If Google chrome will not launch from the command line then you must install libudev-dev
 # as stated above then link the shared object libraries with the following command.
-    => sudo ln -sf /lib/i386-linux-gnu/libudev.so.1 /lib/i386-linux-gnu/libudev.so.0
+        sudo ln -sf /lib/i386-linux-gnu/libudev.so.1 /lib/i386-linux-gnu/libudev.so.0
 
 # .SO linker command for a 64 bit system.
-    => sudo ln -sf /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
+        sudo ln -sf /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
 
 To be continued .....
