@@ -6,10 +6,9 @@ while true; do
 
                 ruby /home/anthony/Documents/Ruby/ImageCapture.rb;
 
-                #find / -name "ImageCapture.rb" -exec ruby {} \;
-
         fi
 
     sleep 2;
 
 done
+
