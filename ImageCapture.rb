@@ -10,9 +10,14 @@ require 'hornetseye_rmagick'
 
 include Hornetseye
 
+# change class name to LoginWatcher
 class ImageCapture
+  # kill this completely
   @@locationBool = []
 
+  # change to initialize
+  # remove the return falses
+  # this method should be 2 lines long when you are done
   def auth(authFile, user)
     if authFile.nil?
       puts "Authorization file was not provided or does not exist."
@@ -33,7 +38,13 @@ class ImageCapture
     File.open(@authFile, "w") {|file| file.truncate(0)}
   end
 
+  # remove this public statement
   public
+  # make the tailFile and the regex constants in this class
+  # remove them as arguments to this method
+  #
+  # this method is too long, some of my suggestions below
+  # will shorten it
   def tail(tailFile, regex, attemptNo=2, bool)
 
     if tailFile.nil?
@@ -52,8 +63,11 @@ class ImageCapture
       count += 1
 
         if count == attemptNo && bool == 1
+          # make a constant for /dev/video0
           camera = V4L2Input.new '/dev/video0'
           img = camera.read
+          # make a constant for capture.png
+          # constants go at the top of the class and are all caps
           img.to_ubytergb.save_ubytergb 'capture.png'
           File.open(@authFile, "w") { |file| file.write("#{@user}\n") }
 	  @@locationBool = 1
@@ -72,6 +86,15 @@ class ImageCapture
 
      end # End of while true do
     end
+    def snapIntruder
+      # move the lines for taking the picture into this method
+    end
+    def locateIntruder
+      # move the geolocation code in here
+    end
+    def emailOwner
+      # move the call to mail into here
+    end
 
   end
 
@@ -82,6 +105,8 @@ ImgCap.auth("/home/anthony/Documents/Ruby/auth", "anthony")
 ImgCap.eraseFile
 ImgCap.tail("/var/log/auth.log", /gdm-password:auth.*:\sauthentication\sfailure/, 2, 1)
 
+# move this class to its own file
+# require it at the top of this file
 class DataMailer
 
   def dataMailer(port, imgName, imgPath)
@@ -103,11 +128,14 @@ class DataMailer
   mail.deliver
   end
 end
+# move these lines into emailOwner above
 sendImage = DataMailer.new
 sendImage.dataMailer(445, 'capture.png', '/home/anthony/Documents/Ruby/')
 
+# kill this class
 class LocationData < ImageCapture
 
+  # move the body of this method into locateIntruder above
   def getLocation
     if @@locationBool == 1
       browser = Watir::Browser.new :chrome, :switches => %w[--user-data-dir=/home/anthony]
